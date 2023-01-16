@@ -1,0 +1,207 @@
+openapi: 3.0.3
+info:
+  title: Rate Api
+  description: Handle the info about rates in platform
+  version: "1.0"
+tags:
+- name: rates
+  description: Available operations for rates domain.
+paths:
+  /tarifa/{id}:
+    get:
+      tags:
+      - rates
+      summary: Get rate by id
+      operationId: getCurrencies
+      parameters:
+        - in: path
+          description: The id of the rate
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RateFormattedDto'
+        400:
+          description: Rate not found
+          content: {}
+    put:
+      summary: Update a rate price for a given rate id.
+      parameters:
+        - in: path
+          description: The id of the rate
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RateUpdateDto'
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RateDto'
+        400:
+          description: Rate not found || Error updating rate
+          content: {}
+    delete:
+      summary: Delete rate given rate id.
+      parameters:
+        - in: path
+          description: The id of the rate
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RateDto'
+        400:
+          description: Rate not found || Error deleting rate
+          content: {}
+  /tarifa:
+    post:
+      summary: Creates a rate.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RateDto'
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RateDto'
+        400:
+          description: Currency not found || Error saving rate
+          content: {}
+  /tarifa/{date}/{productId}/{brandId}:
+    put:
+      summary: Update a rate price for a given rate id.
+      parameters:
+        - in: path
+          description: Date between startDate and endDate of rate
+          name: date
+          required: true
+          schema:
+            type: LocalDate
+        - in: path
+          description: The id of the product
+          name: productId
+          required: true
+          schema:
+            type: integer
+        - in: path
+          description: The id of the brand
+          name: brandId
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RateFormattedDto'
+        400:
+          description: Rate not found || Error updating rate
+          content: {}
+components:
+  schemas:
+    RateDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        brandId:
+          type: integer
+          example: 1
+        productId:
+          type: integer
+          example: 1
+        startDate:
+          type: LocalDate
+          example: "2022-01-01"
+        endDate:
+          type: LocalDate
+          example: "2022-01-01"
+        price:
+          type: string
+          example: "1550"
+        currencyCode:
+          type: string
+          example: "EUR"
+      required:
+        - id
+        - brandId
+        - productId
+        - startDate
+        - endDate
+        - price
+        - currencyCode
+    RateFormattedDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        brandId:
+          type: integer
+          example: 1
+        productId:
+          type: integer
+          example: 1
+        startDate:
+          type: LocalDate
+          example: "2022-01-01"
+        endDate:
+          type: LocalDate
+          example: "2022-01-01"
+        price:
+          type: string
+          example: "1550.00€"
+        currencyCode:
+          type: string
+          example: "EUR"
+      required:
+        - id
+        - brandId
+        - productId
+        - startDate
+        - endDate
+        - price
+        - currencyCode
+    RateUpdateDto:
+      price: object
+      properties:
+        id:
+          type: integer
+          example: 5500
+      required:
+        - price
+  securitySchemes:
+    basicAuth: 
+      type: http
+      scheme: basic
+security:
+  - basicAuth: []
